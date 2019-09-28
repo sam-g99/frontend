@@ -1,15 +1,8 @@
-<style>
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
 
-<a class="center" href="https://github.com/NachoNight" target="_blank" rel="noopener noreferrer"><img class="center" src="https://vuejs.org/images/logo.png" width="100"></a>
+<p align="center"><a href="https://github.com/NachoNight" target="_blank" rel="noopener noreferrer"><img class="center" src="https://vuejs.org/images/logo.png" width="100"></a></p>
 
-<h1 class="center">Nacho Night</h1>
-<h4 class="center">Front-End Repository</h4>
+<h1 align="center">Nacho Night</h1>
+<h4 align="center">Front-End Repository</h4>
 
 ## Introduction
 
