@@ -15,7 +15,7 @@ Checklist
  - [ ] Do we need to test this?
  - [ ] Were tests written?
  - [ ] Does this meet coding standards?
- - [ ] Is this is code change?
+ - [ ] Is this a code change?
  - [ ] Is this a meta change (e.g issue template)?
  - [ ] Is this pull request ready for review?
  - [ ] Is this a breaking change (e.g not backwards compatible with clients)?
