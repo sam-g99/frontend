@@ -1,5 +1,1 @@
-@mixin flex($horizontal, $vertical) {
-  align-items: $vertical;
-  display: flex;
-  justify-content: $horizontal;
-}
+@import '/mixins'
