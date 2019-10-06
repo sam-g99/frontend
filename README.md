@@ -18,7 +18,7 @@ This is the front-end repository for **Nacho Night**, an MIT licensed open-sourc
 - [VueJS](https://vuejs.org/v2/guide/) - Official VueJS Documentation
 - [Airbnb Style Guide](https://github.com/airbnb/javascript) - JavaScript Style Guide by Airbnb
 - [SCSS](https://sass-lang.com/documentation) - Official SCSS Documentation
-- [A Most Reasonable Approach to CSS and Sass](https://github.com/airbnb/css) - CSS & Sass Style Guide by Airbnb
+- [A Mostly Reasonable Approach to CSS and Sass](https://github.com/airbnb/css) - CSS & Sass Style Guide by Airbnb
 - [Block Element Modifier (BEM)](https://en.bem.info/methodology/) - Official BEM Documentation
 
 ## Recommended Visual Studio Code Extensions
