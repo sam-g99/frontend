@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import ComingSoon from '@/views/ComingSoon.vue';
 
 Vue.use(Router);
 
@@ -7,8 +8,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('@/views/Home.vue'),
+      name: 'ComingSoon',
+      component: ComingSoon,
     },
   ],
 });
