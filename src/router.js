@@ -7,8 +7,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('@/views/Home.vue'),
+      name: 'ComingSoon',
+      component: () => import('@/views/ComingSoon.vue'),
     },
   ],
 });

@@ -3,13 +3,20 @@
 		@content;
 	}
 }
+
 @mixin breakpoint-max($size) {
 	@media only screen and (max-width: $size + px) {
 		@content;
 	}
 }
+
 @mixin flex($horizontal, $vertical) {
   align-items: $vertical;
   display: flex;
   justify-content: $horizontal;
+}
+
+@mixin page-container {
+	height: 100vh;
+	width: 100vw;
 }
