@@ -22,11 +22,11 @@ export default {
 @import '@/styles/main.scss';
 
 .coming-soon {
-  @include flex(center, center);
-  @include page-container;
   background-color: #5b5095;
   color: #fff;
   flex-direction: column;
+  @include flex(center, center);
+  @include page-container;
 
   * {
     margin: 0.5em;
@@ -37,9 +37,9 @@ export default {
   }
 
   &__social-links {
-    @include flex(center, center);
     color: #fff;
     text-decoration: none;
+    @include flex(center, center);
 
     img {
       height: 40px;
