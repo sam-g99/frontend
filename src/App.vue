@@ -4,6 +4,17 @@
   </div>
 </template>
 
+<script>
+export default {
+  name: 'App',
+  metaInfo: {
+    titleTemplate: titleChunk => {
+      return titleChunk ? `${titleChunk} | NachoNight` : 'NachoNight';
+    },
+  },
+};
+</script>
+
 <style lang="scss">
 @import '@/styles/main.scss';
 

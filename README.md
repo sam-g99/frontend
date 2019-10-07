@@ -1,5 +1,5 @@
 
-<p align="center"><a href="https://github.com/NachoNight" target="_blank" rel="noopener noreferrer"><img class="center" src="https://i.imgur.com/MObxII4.png" width="100"></a></p>
+<p align="center"><a href="https://github.com/NachoNight" target="_blank" rel="noopener noreferrer"><img class="center" src="https://raw.githubusercontent.com/NachoNight/frontend/master/src/assets/logo_transparent_full.svg?sanitize=true" width="200"></a></p>
 
 <h1 align="center">Nacho Night</h1>
 <h4 align="center">Front-End Repository</h4>
