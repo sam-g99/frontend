@@ -11,7 +11,11 @@
     {
       "language": "javascriptreact",
       "autoFix": true
-    }
+    },
+    {
+			"language": "scss",
+			"autoFix": true
+		}
   ],
   "eslint.autoFixOnSave": true,
   "editor.formatOnSave": false,
