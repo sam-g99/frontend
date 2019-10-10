@@ -31,7 +31,6 @@ export default {
   height: 100vh;
   text-align: center;
   width: 100vw;
-
   @include flex(center, center);
 }
 </style>

@@ -98,7 +98,6 @@ export default {
   background-color: #5b5095;
   color: #fff;
   flex-direction: column;
-
   @include flex(center, center);
   @include page-container;
 
@@ -113,7 +112,6 @@ export default {
   &__social-links {
     color: #fff;
     text-decoration: none;
-
     @include flex(center, center);
 
     img {
