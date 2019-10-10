@@ -28,11 +28,9 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  @include flex(center, center);
-
-  // TEMPORARY RULES FOR INITIAL LAYOUT. REMOVE THEM IF NECESSARY.
   height: 100vh;
+  text-align: center;
   width: 100vw;
+  @include flex(center, center);
 }
 </style>
