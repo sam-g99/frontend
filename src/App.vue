@@ -33,6 +33,5 @@ export default {
   width: 100vw;
 
   @include flex(center, center);
-  // TEMPORARY RULES FOR INITIAL LAYOUT. REMOVE THEM IF NECESSARY.
 }
 </style>
