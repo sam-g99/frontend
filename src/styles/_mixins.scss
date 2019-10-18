@@ -3,7 +3,11 @@
     @content;
   }
 }
-
+@mixin breakpoint-height($size) {
+  @media only screen and (min-height: $size + px) and (min-width: 1200px) {
+    @content;
+  }
+}
 @mixin breakpoint-max($size) {
   @media only screen and (max-width: $size + px) {
     @content;
@@ -17,6 +21,6 @@
 }
 
 @mixin page-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
 }
