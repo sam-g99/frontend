@@ -15,6 +15,8 @@ module.exports = {
   rules: {
     'linebreak-style': 0,
     'global-require': 0,
+    'import/no-unresolved': 0,
+    'import/extensions': 0,
     'eslint linebreak-style': [0, 'error', 'windows'],
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
