@@ -1,6 +1,6 @@
 <template>
   <div class="coming-soon" :class="{ inputMode: isFocused }">
-    <img class="coming-soon__logo" src="@/assets/logo_transparent_full.svg" alt="logo" />
+    <LogoAnimated height="200px" />
     <h1>Coming Soon</h1>
     <p class="coming-soon__desc">Share your screen, window and tabs with your friends</p>
 
@@ -17,10 +17,11 @@
 import PurpleNachos from '@/components/PurpleNachos';
 import Twitter from '@/components/Twitter';
 import Form from '@/components/Form';
+import LogoAnimated '@/components/LogoAnimated.vue';
 
 export default {
   name: 'ComingSoon',
-  components: { PurpleNachos, Twitter, Form },
+  components: { PurpleNachos, Twitter, Form, LogoAnimated },
   metaInfo() {
     return {
       title: this.meta.title,
