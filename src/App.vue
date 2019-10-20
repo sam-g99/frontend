@@ -35,9 +35,9 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 400px;
+  position: relative;
   text-align: center;
   width: 100%;
-  position: relative;
   @include flex(center, center);
 }
 </style>
