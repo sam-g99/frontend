@@ -17,9 +17,18 @@
 <script>
 export default {
   name: 'LogoAnimated',
+  props: {
+    height: { type: String, default: `100px`, required: true },
+  },
   mounted() {
-    this.mouseTracker('.logo-animated__eye--left');
-    this.mouseTracker('.logo-animated__eye--right');
+    const logo = '.logo-animated';
+    const leftEye = '.logo-animated__eye--left';
+    const rightEye = '.logo-animated__eye--right';
+    this.mouseTracker(leftEye);
+    this.mouseTracker(rightEye);
+    document.querySelectorAll(logo)[0].style.height = this.height;
+    document.querySelectorAll(leftEye)[0].style.height = `calc(${this.height}/ 3.63)`;
+    document.querySelectorAll(rightEye)[0].style.height = `calc(${this.height}/ 3.63)`;
   },
   methods: {
     mouseTracker(className) {
@@ -41,9 +50,6 @@ export default {
 @import '@/styles/main.scss';
 
 .logo-animated {
-  // TODO: FIGURE OUT A WAY TO MAKE THE SIZE RESPONSIVE.
-  $logo-size: 100px;
-  height: $logo-size;
   position: relative;
   @include flex(center, center);
 
@@ -52,10 +58,7 @@ export default {
   }
 
   &__eye {
-    $eye-size: calc(#{$logo-size} / 3.63);
-    height: $eye-size;
     position: absolute;
-    width: $eye-size;
 
     &--left {
       left: 5%;

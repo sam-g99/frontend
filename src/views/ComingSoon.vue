@@ -1,7 +1,6 @@
 <template>
   <div class="coming-soon">
-    <!-- <img class="coming-soon__logo" src="@/assets/logo_transparent_full.svg" alt="logo" /> -->
-    <LogoAnimated />
+    <LogoAnimated height="200px" />
     <p>Nacho Night is under development.</p>
     <a
       class="coming-soon__social-links"
