@@ -1,5 +1,6 @@
 <template>
   <form @submit.prevent="action">
+    <p v-if="this.$store.state.alert" class="alert">{{ $store.state.alert }}</p>
     <input
       ref="email"
       :class="{ comeOut: submitted }"
@@ -10,11 +11,12 @@
       required="true"
       :disabled="submitted"
       @focus="isFocused = true"
-      @blur="isFocused = false"
+      @keyup="updateEmail"
+      @blur="updateEmail"
     />
     <Success :submitted="submitted" />
     <button :class="{ comeOut: submitted }" :disabled="submitted" type="submit" class="notify">
-      Notify Me!
+      {{ loading ? 'Verifying...' : 'Notify Me!' }}
     </button>
   </form>
 </template>
@@ -35,12 +37,36 @@ export default {
       type: Function,
       default: () => 1,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    email: {
+      type: String,
+      default: '',
+    },
+  },
+  methods: {
+    updateEmail(e) {
+      this.$store.state.email = e.target.value;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import '@/styles/main.scss';
+
+.alert {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 10px;
+  color: rgb(117, 15, 15);
+  background: rgb(255, 162, 162);
+  font-weight: 500;
+  padding: 5px;
+  border-radius: 5px;
+}
 
 form {
   align-items: center;
@@ -49,7 +75,7 @@ form {
   margin-top: 30px;
   max-width: 500px;
   width: 100%;
-
+  position: relative;
   @include breakpoint(375) {
     margin-top: 35px;
   }
@@ -94,6 +120,7 @@ form {
   font-size: 18px;
   font-weight: 500;
   margin-top: 20px;
+  transition: background-color 0.2s, transform 0.2s;
   max-width: 500px;
   outline: none;
   padding: 10px;
@@ -102,10 +129,19 @@ form {
     font-size: 20px;
     padding: 12px;
   }
+  @include breakpoint($desktop) {
+    &:hover {
+      background: rgb(6, 126, 6);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
 
 .comeOut {
-  animation-duration: 0.5s;
+  animation-duration: 0.3s;
   animation-name: come-out;
   animation-fill-mode: forwards;
   animation-timing-function: ease-in-out;
@@ -124,7 +160,6 @@ form {
 
   100% {
     opacity: 0;
-    position: absolute;
     transform: translateX(-200px);
     visibility: hidden;
   }

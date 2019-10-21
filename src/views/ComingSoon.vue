@@ -4,7 +4,7 @@
     <h1>Coming Soon</h1>
     <p class="coming-soon__desc">Share your screen, window and tabs with your friends</p>
 
-    <Form :action="submitEmail" :submitted="submitted" />
+    <Form :action="submitEmail" :submitted="submitted" :loading="loading" :email="email" />
 
     <Twitter :submitted="submitted" />
 
@@ -81,6 +81,8 @@ export default {
     isFocused: '',
     submitted: false,
     nachosAmount: 8,
+    loading: false,
+    email: '',
     meta: {
       title: 'Coming Soon',
       description: {
@@ -127,7 +129,28 @@ export default {
   },
   methods: {
     submitEmail() {
-      this.submitted = true;
+      this.loading = true;
+      this.axios
+        .post(`${this.$store.state.api}add-address`, {
+          email: this.$store.state.email,
+        })
+        .then(r => {
+          this.$store.state.alert = '';
+          this.submitted = true;
+          this.loading = false;
+        })
+        .catch(error => {
+          window.navigator.vibrate(200);
+          const errorStatus = error.response.status;
+          this.loading = false;
+          if (errorStatus === 403) {
+            this.$store.state.alert =
+              'Your email is already setup to be notified! Thanks for the commitment though.';
+          } else {
+            this.$store.state.alert =
+              'Oop, hold the cheese, something went wrong. Try again later.';
+          }
+        });
     },
   },
 };
