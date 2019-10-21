@@ -124,6 +124,7 @@ form {
 
   100% {
     opacity: 0;
+    position: absolute;
     transform: translateX(-200px);
     visibility: hidden;
   }
