@@ -8,11 +8,12 @@
       name="email"
       placeholder="Enter your email"
       required="true"
+      :disabled="submitted"
       @focus="isFocused = true"
       @blur="isFocused = false"
     />
     <Success :submitted="submitted" />
-    <button :class="{ comeOut: submitted }" type="submit" class="notify">
+    <button :class="{ comeOut: submitted }" :disabled="submitted" type="submit" class="notify">
       Notify Me!
     </button>
   </form>

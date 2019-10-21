@@ -127,9 +127,7 @@ export default {
   },
   methods: {
     submitEmail() {
-      if (!this.submitted) {
-        this.submitted = true;
-      }
+      this.submitted = true;
     },
   },
 };
