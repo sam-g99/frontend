@@ -1,8 +1,8 @@
 <template>
   <form @submit.prevent="action">
     <input
-      v-if="!submitted"
       ref="email"
+      :class="{ comeOut: submitted }"
       class="email"
       type="email"
       name="email"
@@ -12,7 +12,9 @@
       @blur="isFocused = false"
     />
     <Success :submitted="submitted" />
-    <button v-if="!submitted" type="submit" class="notify">Notify Me!</button>
+    <button :class="{ comeOut: submitted }" type="submit" class="notify">
+      Notify Me!
+    </button>
   </form>
 </template>
 
@@ -98,6 +100,31 @@ form {
   @include breakpoint(375) {
     font-size: 20px;
     padding: 12px;
+  }
+}
+
+.comeOut {
+  animation-duration: 0.5s;
+  animation-name: come-out;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes come-out {
+  0% {
+    opacity: 0.7;
+    transform: translateX(-10px);
+  }
+
+  50% {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-200px);
+    visibility: hidden;
   }
 }
 

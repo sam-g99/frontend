@@ -43,7 +43,7 @@ export default {
   .twitter-link {
     color: white;
     text-decoration: none;
-    transition: transform 0.2s;
+    transition-duration: 0.2s;
     @include flex(center, center);
 
     &:hover {
