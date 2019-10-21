@@ -26,6 +26,8 @@ export default {
     const rightEye = '.logo-animated__eye--right';
     this.mouseTracker(leftEye);
     this.mouseTracker(rightEye);
+    this.touchTracker(leftEye);
+    this.touchTracker(rightEye);
     document.querySelectorAll(logo)[0].style.height = this.height;
     document.querySelectorAll(leftEye)[0].style.height = `calc(${this.height}/ 3.63)`;
     document.querySelectorAll(rightEye)[0].style.height = `calc(${this.height}/ 3.63)`;
@@ -38,6 +40,20 @@ export default {
         let mouseX = eye.getBoundingClientRect().left;
         let mouseY = eye.getBoundingClientRect().top;
         let radianDegrees = Math.atan2(e.pageX - mouseX, e.pageY - mouseY);
+        let rotationDegrees = radianDegrees * (180 / Math.PI) * -1 + 90;
+        eye.style.transform = `rotate(${rotationDegrees}deg)`;
+      });
+    },
+    touchTracker(className) {
+      let app = document.querySelector('#app');
+      app.addEventListener('touchmove', e => {
+        let eye = document.querySelector(className);
+        let mouseX = eye.getBoundingClientRect().left;
+        let mouseY = eye.getBoundingClientRect().top;
+        let radianDegrees = Math.atan2(
+          e.touches[0].clientX - mouseX,
+          e.touches[0].clientY - mouseY,
+        );
         let rotationDegrees = radianDegrees * (180 / Math.PI) * -1 + 90;
         eye.style.transform = `rotate(${rotationDegrees}deg)`;
       });
