@@ -1,6 +1,6 @@
 <template>
   <div class="coming-soon" :class="{ inputMode: isFocused }">
-    <LogoAnimated height="200px" />
+    <LogoAnimated height="150px" />
     <h1>Coming Soon</h1>
     <p class="coming-soon__desc">Share your screen, window and tabs with your friends</p>
 
@@ -17,7 +17,7 @@
 import PurpleNachos from '@/components/PurpleNachos';
 import Twitter from '@/components/Twitter';
 import Form from '@/components/Form';
-import LogoAnimated '@/components/LogoAnimated.vue';
+import LogoAnimated from '@/components/LogoAnimated.vue';
 
 export default {
   name: 'ComingSoon',
@@ -100,29 +100,29 @@ export default {
     },
   }),
   mounted() {
-    const minHeight = 600;
-    if (window.innerHeight < minHeight && window.matchMedia('(orientation: landscape)').matches) {
-      this.$store.state.windowHeight = minHeight;
-    } else {
-      this.$store.state.windowHeight = window.innerHeight;
-    }
-    window.addEventListener('resize', () => {
-      if (this.$refs.email !== document.activeElement) {
-        if (
-          window.innerHeight < minHeight &&
-          window.matchMedia('(orientation: landscape)').matches
-        ) {
-          this.$store.state.windowHeight = minHeight;
-        } else {
-          this.$store.state.windowHeight = window.innerHeight;
-        }
-      }
-      // Purple Nacho Logic
+    const adjustNachos = () => {
       if (window.innerWidth < 1150) {
         this.nachosAmount = 19;
       } else {
         this.nachosAmount = 8;
       }
+    };
+    adjustNachos();
+    const minHeight = 600;
+    const adjustHeight = () => {
+      if (window.innerHeight < minHeight && window.matchMedia('(orientation: landscape)').matches) {
+        this.$store.state.windowHeight = minHeight;
+      } else {
+        this.$store.state.windowHeight = window.innerHeight;
+      }
+    };
+    adjustHeight();
+    window.addEventListener('resize', () => {
+      if (this.$refs.email !== document.activeElement) {
+        adjustHeight();
+      }
+      // Purple Nacho Logic
+      adjustNachos();
     });
   },
   methods: {
@@ -151,31 +151,6 @@ $desktop: 1000;
   position: relative;
   width: 100%;
   @include flex(flex-start, center);
-
-  &__logo {
-    backface-visibility: hidden;
-    filter: grayscale(0%); // fixes flickering in firefox
-    margin-top: 10px;
-    max-width: 380px;
-    width: 80%;
-    will-change: width;
-    @include breakpoint(375) {
-      margin-top: 10px;
-      width: 90%;
-    }
-    @include breakpoint(100) {
-      max-width: 420px;
-    }
-    @include breakpoint-height(750) {
-      margin-top: 20px;
-    }
-    @include breakpoint-height(850) {
-      margin-top: 50px;
-    }
-    @include breakpoint-height(1000) {
-      margin-top: 70px;
-    }
-  }
 
   h1 {
     font-size: 30px;
