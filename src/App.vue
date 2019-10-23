@@ -17,6 +17,12 @@ export default {
   computed: {
     ...mapState(['windowHeight']),
   },
+  mounted() {
+    const path = this.$route.fullPath;
+    if (path !== '/') {
+      this.$router.push('/');
+    }
+  },
 };
 </script>
 
@@ -34,7 +40,7 @@ export default {
   font-family: 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 400px;
+  min-height: 500px;
   position: relative;
   text-align: center;
   width: 100%;
