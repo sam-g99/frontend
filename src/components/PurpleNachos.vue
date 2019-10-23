@@ -34,6 +34,8 @@ export default {
     }
   }
 
+  $moveUp: -10px;
+
   img {
     margin-left: -25px;
     margin-right: -35px;
@@ -48,8 +50,7 @@ export default {
     width: 120px;
 
     &:hover {
-      margin-top: -30px;
-      transform: scale(1.2);
+      transform: scale(1.2) translateY($moveUp);
     }
 
     &:active {
@@ -60,7 +61,7 @@ export default {
       transform: rotate(30deg);
 
       &:hover {
-        transform: scale(1.2) rotate(30deg);
+        transform: scale(1.2) rotate(30deg) translateY($moveUp);
       }
 
       &:active {
@@ -72,7 +73,7 @@ export default {
       transform: rotate(10deg);
 
       &:hover {
-        transform: scale(1.2) rotate(10deg);
+        transform: scale(1.2) rotate(10deg) translateY($moveUp);
       }
 
       &:active {

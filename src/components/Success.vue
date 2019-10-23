@@ -26,13 +26,14 @@ export default {
   flex-flow: column;
   height: 130px;
   max-width: 500px;
-  padding: 10px;
-  width: 100%;
-  @include flex(center, center);
   opacity: 0;
-  visibility: hidden;
+  padding: 10px;
   position: absolute;
   transform: translateX(-200px);
+  visibility: hidden;
+  width: 100%;
+  @include flex(center, center);
+
   h3 {
     font-size: 24px;
     font-weight: 500;
@@ -46,11 +47,11 @@ export default {
 }
 
 .comeIn {
-  animation-duration: 0.5s;
-  animation-name: come-in;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-in-out;
   animation-delay: 0.1s;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  animation-name: come-in;
+  animation-timing-function: ease-in-out;
 }
 
 @keyframes come-in {

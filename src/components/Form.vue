@@ -58,24 +58,25 @@ export default {
 @import '@/styles/main.scss';
 
 .alert {
-  width: 100%;
-  text-align: left;
-  margin-bottom: 10px;
-  color: rgb(117, 15, 15);
   background: rgb(255, 162, 162);
-  font-weight: 500;
-  padding: 5px;
   border-radius: 5px;
+  color: rgb(117, 15, 15);
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding: 5px;
+  text-align: left;
+  width: 100%;
 }
 
 form {
   align-items: center;
   display: flex;
   flex-flow: column;
+  margin-bottom: 20px;
   margin-top: 30px;
   max-width: 500px;
-  width: 100%;
   position: relative;
+  width: 100%;
   @include breakpoint(375) {
     margin-top: 35px;
   }
@@ -120,10 +121,10 @@ form {
   font-size: 18px;
   font-weight: 500;
   margin-top: 20px;
-  transition: background-color 0.2s, transform 0.2s;
   max-width: 500px;
   outline: none;
   padding: 10px;
+  transition: background-color 0.2s, transform 0.2s;
   width: 100%;
   @include breakpoint(375) {
     font-size: 20px;
@@ -142,8 +143,8 @@ form {
 
 .comeOut {
   animation-duration: 0.3s;
-  animation-name: come-out;
   animation-fill-mode: forwards;
+  animation-name: come-out;
   animation-timing-function: ease-in-out;
 }
 

@@ -71,6 +71,7 @@ export default {
 
   &__logo {
     height: 100%;
+    width: 100%;
   }
 
   &__eye {

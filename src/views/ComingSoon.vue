@@ -1,8 +1,11 @@
 <template>
   <div class="coming-soon" :class="{ inputMode: isFocused }">
-    <LogoAnimated height="150px" />
+    <div class="coming-soon__logo-container">
+      <LogoAnimated height="100%" />
+    </div>
+
     <h1>Coming Soon</h1>
-    <p class="coming-soon__desc">Share your screen, window and tabs with your friends</p>
+    <p class="coming-soon__desc">Share your screen, window and tabs with your friends.</p>
 
     <Form :action="submitEmail" :submitted="submitted" :loading="loading" :email="email" />
 
@@ -134,7 +137,7 @@ export default {
         .post(`${this.$store.state.api}add-address`, {
           email: this.$store.state.email,
         })
-        .then(r => {
+        .then(() => {
           this.$store.state.alert = '';
           this.submitted = true;
           this.loading = false;
@@ -174,6 +177,31 @@ $desktop: 1000;
   position: relative;
   width: 100%;
   @include flex(flex-start, center);
+
+  &__logo-container {
+    backface-visibility: hidden;
+    filter: grayscale(0%); // fixes flickering in firefox
+    margin-top: 10px;
+    max-width: 380px;
+    width: 80%;
+    will-change: width;
+    @include breakpoint(375) {
+      margin-top: 10px;
+      width: 90%;
+    }
+    @include breakpoint(100) {
+      max-width: 420px;
+    }
+    @include breakpoint-height(750) {
+      margin-top: 20px;
+    }
+    @include breakpoint-height(850) {
+      margin-top: 50px;
+    }
+    @include breakpoint-height(1000) {
+      margin-top: 70px;
+    }
+  }
 
   h1 {
     font-size: 30px;
