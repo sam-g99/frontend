@@ -1,7 +1,7 @@
 <template>
   <div class="viewing-room-container">
     <VideoPlayer />
-    <ChatArea v-if="conn" :conn="conn" />
+    <ChatArea v-if="conns" :conns="conns" />
     <button>stream</button>
   </div>
 </template>
@@ -18,9 +18,8 @@ export default {
   data: () => {
     return {
       conn: '',
-      conns: '',
+      conns: [],
       peer: {},
-      userIds: [''],
       constraints: {
         audio: true,
         video: {
@@ -47,11 +46,13 @@ export default {
 
     getPeers() {
       this.peer.on('connection', conn => {
-        this.conn = conn;
         console.log('connected');
-        conn.on('data', data => {
-          console.log(data);
-          this.userIds.push(data);
+        this.conns.push(conn);
+        conn.on('open', () => {
+          const peerIds = this.conns.map(c => c.peer);
+          this.conns.forEach(conn => {
+            conn.send({ type: 'connections', ids: peerIds });
+          });
         });
       });
     },

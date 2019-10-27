@@ -32,6 +32,9 @@
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
+    conns: {
+      type: Array,
+    },
     conn: {
       type: Object,
     },
@@ -48,15 +51,15 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.conn.on('data', data => {
-      this.messages.push({ user: 'Titan', content: data });
-      const container = this.$refs.messageContainer;
-      setTimeout(() => {
-        container.scrollTop = container.scrollHeight;
-      }, 10);
-    });
+  watch: {
+    conns: function(newConns) {
+      console.log('watched');
+      const conn = newConns[newConns.length - 1];
+      console.log(conn.peer);
+      this.listenForMessages(conn);
+    },
   },
+  mounted() {},
   methods: {
     sendMessage() {
       if (this.currentMessage === '') {
@@ -66,12 +69,30 @@ export default {
         user: 'Titan',
         content: this.currentMessage,
       });
-      this.conn.send(this.currentMessage);
+      this.conns.forEach(conn => {
+        console.log('sent to' + conn.peer);
+        conn.send({ type: 'message', content: this.currentMessage });
+      });
       this.currentMessage = '';
       const container = this.$refs.messageContainer;
       setTimeout(() => {
         container.scrollTop = container.scrollHeight;
       }, 10);
+    },
+
+    listenForMessages(conn) {
+      console.log('listening to' + conn.peer);
+      conn.on('data', data => {
+        console.log(data);
+        if (!data.type === 'message') {
+          return;
+        }
+        this.messages.push({ user: 'Titan', content: data.content });
+        const container = this.$refs.messageContainer;
+        setTimeout(() => {
+          container.scrollTop = container.scrollHeight;
+        }, 10);
+      });
     },
   },
 };

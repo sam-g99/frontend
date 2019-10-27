@@ -1,7 +1,7 @@
 <template>
   <div class="viewing-room-container">
+    <ChatArea v-if="conns" :conns="conns" />
     <VideoPlayer />
-    <ChatArea v-if="conn" :conn="conn" />
     Potato
   </div>
 </template>
@@ -22,44 +22,67 @@ export default {
       roomId: 'host',
       messages: [],
       conn: '',
+      conns: [],
+      userId: '',
+      roomUsersId: [],
+      firstConnection: true,
     };
   },
 
   mounted() {
     this.getPeerId();
     this.peerConnection();
-    this.connectToHost();
   },
   methods: {
     getPeerId() {
-      this.peer = this.peerId('');
-    },
-    peerConnection() {
-      this.peer.on('open', function(id) {
-        console.log('My peer ID is: ' + id);
-      });
-    },
+      const id =
+        Math.random()
+          .toString(36)
+          .substring(2, 15) +
+        Math.random()
+          .toString(36)
+          .substring(2, 15);
 
-    getPeers() {
-      this.peer.on('connection', conn => {
-        conn.on('data', data => {
-          console.log(data);
-          if (data.type === 'id') {
-            this.userIds.push(data);
-          }
-          if (data.type === 'message') {
-            console.log(data);
-          }
-        });
-      });
+      this.peer = this.peerId('');
     },
 
     connectToHost() {
       const conn = this.peer.connect('host');
       this.conn = conn;
-      conn.on('open', () => {
-        conn.send('okay');
+      this.conns.push(this.conn);
+      conn.on('open', function() {});
+      conn.on('data', data => {
+        console.log(data);
+        if (data.type === 'connections') {
+          if (this.firstConnection) {
+            this.firstConnection = false;
+            return;
+          }
+          data.ids.forEach(user => {
+            console.log('checking ' + this.peer.id);
+            if (!this.roomUsersId.includes(user) && this.peer.id !== user) {
+              this.roomUsersId.push(user);
+              const conn = this.peer.connect(user);
+              console.log('connected to ' + user);
+              conn.on('open', () => {
+                console.log('pushed' + conn.peer);
+                this.conns.push(conn);
+              });
+            }
+          });
+        }
       });
+    },
+
+    peerConnection() {
+      let peerId = '';
+      this.peer.on('connection', conn => {
+        console.log('This connection is to ' + conn.peer);
+        this.conns.push(conn);
+      });
+      console.log('hello ' + peerId);
+      this.userId = peerId;
+      this.connectToHost();
     },
   },
 };
