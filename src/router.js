@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Meta from 'vue-meta';
 import Router from 'vue-router';
-import ComingSoon from '@/views/ComingSoon.vue';
+import UserRoom from '@/views/UserRoom.vue';
+import EnterRoom from '@/views/EnterRoom.vue';
 
 Vue.use(Router);
 Vue.use(Meta);
@@ -11,8 +12,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'ComingSoon',
-      component: ComingSoon,
+      name: 'UserRoom',
+      component: UserRoom,
+    },
+    {
+      path: '/room',
+      name: 'EnterRoom',
+      component: EnterRoom,
     },
   ],
 });
