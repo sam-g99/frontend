@@ -35,15 +35,10 @@ export default {
   },
   methods: {
     getPeerId() {
-      const id =
-        Math.random()
-          .toString(36)
-          .substring(2, 15) +
-        Math.random()
-          .toString(36)
-          .substring(2, 15);
-
       this.peer = this.peerId('');
+      this.peer.on('open', id => {
+        console.log(id);
+      });
     },
 
     connectToHost() {
@@ -52,20 +47,18 @@ export default {
       this.conns.push(this.conn);
       conn.on('open', function() {});
       conn.on('data', data => {
-        console.log(data);
         if (data.type === 'connections') {
           if (this.firstConnection) {
+            this.roomUsersId = data.ids;
             this.firstConnection = false;
             return;
           }
           data.ids.forEach(user => {
-            console.log('checking ' + this.peer.id);
             if (!this.roomUsersId.includes(user) && this.peer.id !== user) {
               this.roomUsersId.push(user);
+              console.log('Connect to ' + user);
               const conn = this.peer.connect(user);
-              console.log('connected to ' + user);
               conn.on('open', () => {
-                console.log('pushed' + conn.peer);
                 this.conns.push(conn);
               });
             }
@@ -77,10 +70,8 @@ export default {
     peerConnection() {
       let peerId = '';
       this.peer.on('connection', conn => {
-        console.log('This connection is to ' + conn.peer);
         this.conns.push(conn);
       });
-      console.log('hello ' + peerId);
       this.userId = peerId;
       this.connectToHost();
     },

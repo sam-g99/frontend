@@ -53,9 +53,8 @@ export default {
   },
   watch: {
     conns: function(newConns) {
-      console.log('watched');
       const conn = newConns[newConns.length - 1];
-      console.log(conn.peer);
+
       this.listenForMessages(conn);
     },
   },
@@ -70,7 +69,6 @@ export default {
         content: this.currentMessage,
       });
       this.conns.forEach(conn => {
-        console.log('sent to' + conn.peer);
         conn.send({ type: 'message', content: this.currentMessage });
       });
       this.currentMessage = '';
@@ -81,9 +79,7 @@ export default {
     },
 
     listenForMessages(conn) {
-      console.log('listening to' + conn.peer);
       conn.on('data', data => {
-        console.log(data);
         if (!data.type === 'message') {
           return;
         }
