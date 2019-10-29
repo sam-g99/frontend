@@ -97,8 +97,8 @@ export default {
 
       // Sending username to host once connected
       conn.on('open', () => {
-        this.disconnectEvent(conn);
         conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+        this.disconnectEvent(conn);
         conn.on('data', data => {
           if (data.type === 'username') {
             console.log('username recieved', data);

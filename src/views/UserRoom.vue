@@ -105,7 +105,7 @@ export default {
     },
     getPeers() {
       this.peer.on('connection', conn => {
-        console.log('User conneced', conn.peer)
+        console.log('User conneced', conn.peer);
         // add connection to connection list
         this.conns.push(conn);
 
