@@ -35,7 +35,8 @@
         type="text"
         placeholder="Send a message"
         @keyup.enter="sendMessage()"
-        @keyup="sendTypingStatus()"
+        @keyup.prevent.13="sendTypingStatus()"
+        @keypress.13.prevent
       />
       <button>Send</button>
     </div>
@@ -67,7 +68,6 @@ export default {
   watch: {
     conns: function(newConns) {
       const conn = newConns[newConns.length - 1];
-
       this.listenForMessages(conn);
     },
   },
@@ -122,7 +122,8 @@ export default {
       });
     },
     sendTypingStatus() {
-      this.sendToAllPeers({ type: 'typing', username: this.username });
+      // Will finesse later
+      // this.sendToAllPeers({ type: 'typing', username: this.username });
     },
   },
 };

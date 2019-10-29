@@ -1,15 +1,21 @@
 <template>
   <div class="viewing-room-container">
-    <VideoPlayer ref="video" :streaming="streaming" />
-    <ChatArea v-if="conns" :conns="conns" :username="username" />
+    <VideoPlayer v-if="username" ref="video" :streaming="streaming" />
+    <ChatArea v-if="conns && username" :conns="conns" :username="username" />
     <StreamButton
-      v-if="videoPlayer"
+      v-if="videoPlayer && username"
       :videoPlayer="videoPlayer"
       :peer="peer"
       :conns="conns"
       @streaming="setStream"
     />
-    <ConnectedUsers :users="users" />
+    <ConnectedUsers v-if="username" :users="users" />
+    <div v-if="username" class="room-link-container">
+      <p>Share Room Link</p>
+      <input ref="roomLink" type="text" :value="`${shareLink}`" class="copy-input" readonly />
+      <button @click="copyLink">Copy Link</button>
+    </div>
+    <UserName v-if="!username" :action="setUsername" alert="Enter a username to host" />
   </div>
 </template>
 
@@ -18,6 +24,7 @@ import VideoPlayer from '@/components/video/VideoPlayer';
 import ChatArea from '@/components/chat/ChatArea.vue';
 import ConnectedUsers from '@/components/chat/ConnectedUsers.vue';
 import StreamButton from '@/components/video/StreamButton';
+import UserName from '@/components/chat/UserName.vue';
 
 export default {
   components: {
@@ -25,10 +32,11 @@ export default {
     ChatArea,
     ConnectedUsers,
     StreamButton,
+    UserName,
   },
   data: () => {
     return {
-      username: 'host',
+      username: '',
       conn: '',
       conns: [],
       peer: {},
@@ -36,11 +44,11 @@ export default {
       videoPlayer: '',
       users: [],
       streaming: false,
+      shareLink: 'Connection...',
     };
   },
   mounted() {
     this.start();
-    this.videoPlayer = this.$refs.video.$refs.mainVideo;
   },
   methods: {
     disconnectEvent(conn) {
@@ -60,7 +68,27 @@ export default {
     // All the stuff for mesh network
 
     getPeerId() {
-      this.peer = this.peerId('host');
+      this.peer = this.peerId();
+      this.peer.on('open', id => {
+        this.shareLink = `${window.location.origin}/room/${id}`;
+      });
+    },
+    setUsername(e) {
+      const name = e.target.value;
+      if (name.trim() === '') {
+        return;
+      }
+      this.username = name;
+      // wait for dom
+      setTimeout(() => {
+        this.videoPlayer = this.$refs.video.$refs.mainVideo;
+      });
+    },
+    copyLink() {
+      const link = this.$refs.roomLink;
+      link.select();
+      link.setSelectionRange(0, 99999);
+      document.execCommand('copy');
     },
 
     peerConnection() {
@@ -68,6 +96,7 @@ export default {
         console.log('My peer ID is: ' + id);
       });
     },
+
     sendToAllPeers(message) {
       this.conns.forEach(conn => {
         conn.send(message);
@@ -117,5 +146,28 @@ export default {
 .viewing-room-container {
   background: #1b182d !important;
   height: 100%;
+  .copy-input {
+    border: none;
+    padding: 10px;
+    background: #25213d;
+    color: white;
+    font-size: 20px;
+  }
+
+  .room-link-container {
+    padding: 10px;
+    p {
+      color: white;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+  }
+  button {
+    background: rgb(41, 121, 226);
+    border: none;
+    padding: 13px;
+    color: white;
+  }
 }
 </style>

@@ -1,9 +1,16 @@
 <template>
   <div class="viewing-room-container">
-    <ChatArea v-if="conns && username" :conns="conns" :username="username" />
-    <VideoPlayer v-if="username" ref="video" :streaming="streaming" />
-    <ConnectedUsers v-if="username" :users="users" />
-    <UserName v-if="!username" :action="setUsername" />
+    <ChatArea v-if="conns && username && !loading" :conns="conns" :username="username" />
+    <VideoPlayer v-if="username" style="display:none" :class="{show: !loading}" ref="video" :streaming="streaming" />
+    <ConnectedUsers v-if="username && !loading" :users="users" />
+    <UserName
+      v-if="!username || loading"
+      :action="setUsername"
+      alert="To join the room enter a username"
+    />
+    <p v-if="loading" class="loading-in">
+      Loading you in now...if it takes to long host may not exist or an unknown error.
+    </p>
   </div>
 </template>
 
@@ -35,6 +42,7 @@ export default {
       firstConnection: true,
       stream: '',
       streaming: false,
+      loading: false,
     };
   },
   methods: {
@@ -58,9 +66,10 @@ export default {
         return;
       }
       this.username = name;
+      this.loading = true;
       // waiting for dom
       setTimeout(() => {
-        this.getPeerId();
+        this.getPeerId(name);
         this.peerConnection();
       });
     },
@@ -72,11 +81,7 @@ export default {
     },
 
     connectToHost() {
-      const videoPlayer = this.$refs.video.$refs.mainVideo;
-      const conn = this.peer.connect('host');
-
-      // Saving host connection
-      this.conns.push(conn);
+      const conn = this.peer.connect(this.$route.params.id);
 
       // Sending username to host once connected
       conn.on('open', () => {
@@ -86,7 +91,12 @@ export default {
       conn.on('data', data => {
         if (data.type === 'username') {
           console.log('username recieved', data);
+          this.loading = false;
           this.users.push(data);
+          // Saving host connection wait for dom
+          setTimeout(() => {
+            this.conns.push(conn);
+          });
         }
         if (data.type === 'connections') {
           if (this.firstConnection) {
@@ -122,6 +132,8 @@ export default {
         console.log('called');
         call.answer();
         call.on('stream', hostStream => {
+          let videoPlayer;
+          videoPlayer = this.$refs.video.$refs.mainVideo;
           videoPlayer.srcObject = hostStream;
           videoPlayer.muted = false;
           this.streaming = true;
@@ -153,5 +165,13 @@ export default {
 .viewing-room-container {
   background: #1b182d !important;
   height: 100%;
+}
+.loading-in {
+  color: white;
+  font-weight: 500;
+  font-size: 30px;
+}
+.show{
+  display: block !important;
 }
 </style>
