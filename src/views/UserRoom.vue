@@ -105,23 +105,24 @@ export default {
     },
     getPeers() {
       this.peer.on('connection', conn => {
+        conn.on('data', data => {
+          console.log('username attempt');
+          if (data.type === 'username') {
+            conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+            this.users.push(data);
+            conn.send(this.users);
+          }
+        });
+
         console.log('User conneced', conn.peer);
         // add connection to connection list
         this.conns.push(conn);
-
         // Send the connection status to all peers
         conn.on('open', () => {
           console.log('connection is open');
           const peerIds = this.conns.map(c => c.peer);
           this.sendToAllPeers({ type: 'connections', ids: peerIds });
-          conn.on('data', data => {
-            console.log('username attempt');
-            if (data.type === 'username') {
-              conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-              this.users.push(data);
-              conn.send(this.users);
-            }
-          });
+
           this.disconnectEvent(conn);
           // send stream to new user
           if (this.streaming) {
