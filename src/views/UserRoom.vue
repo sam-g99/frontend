@@ -105,11 +105,13 @@ export default {
     },
     getPeers() {
       this.peer.on('connection', conn => {
+        console.log('User conneced', conn.peer)
         // add connection to connection list
         this.conns.push(conn);
 
         // Send the connection status to all peers
         conn.on('open', () => {
+          console.log('connection is open')
           const peerIds = this.conns.map(c => c.peer);
           this.sendToAllPeers({ type: 'connections', ids: peerIds });
           conn.on('data', data => {
