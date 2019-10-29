@@ -94,12 +94,10 @@ export default {
 
     connectToHost() {
       const conn = this.peer.connect(this.$route.params.id);
-
       // Sending username to host once connected
       conn.on('open', () => {
         console.log('Connection Opened');
         this.loading = false;
-        conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
         this.disconnectEvent(conn);
         conn.on('data', data => {
           if (data.type === 'username') {
@@ -139,6 +137,7 @@ export default {
             });
           }
         });
+        conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
       });
 
       // Managing mesh network
