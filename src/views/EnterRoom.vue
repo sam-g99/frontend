@@ -1,7 +1,13 @@
 <template>
   <div class="viewing-room-container">
     <ChatArea v-if="conns && username && !loading" :conns="conns" :username="username" />
-    <VideoPlayer v-if="username" style="display:none" :class="{show: !loading}" ref="video" :streaming="streaming" />
+    <VideoPlayer
+      v-if="username"
+      style="display:none"
+      ref="video"
+      :class="{ show: !loading }"
+      :streaming="streaming"
+    />
     <ConnectedUsers v-if="username && !loading" :users="users" />
     <UserName
       v-if="!username || loading"
@@ -56,6 +62,11 @@ export default {
         this.users.forEach((user, i) => {
           if (user.peerId === conn.peer) {
             this.users.splice(i, 1);
+            if (i === 0) {
+              alert(
+                "Welp your host left, you're better off finding another or hosting a room yourself.",
+              );
+            }
           }
         });
       });
@@ -87,6 +98,7 @@ export default {
       conn.on('open', () => {
         conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
       });
+      this.disconnectEvent(conn);
       // Managing mesh network
       conn.on('data', data => {
         if (data.type === 'username') {
@@ -171,7 +183,7 @@ export default {
   font-weight: 500;
   font-size: 30px;
 }
-.show{
+.show {
   display: block !important;
 }
 </style>

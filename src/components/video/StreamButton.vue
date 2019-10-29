@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="getStream">Stream</button>
+    <button @click="getStream">Start Stream</button>
   </div>
 </template>
 
@@ -54,4 +54,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+button {
+  background: green;
+  border: none;
+  padding: 10px;
+  font-weight: 500;
+  border-radius: 5px;
+  color: white;
+  font-size: 20px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+</style>
