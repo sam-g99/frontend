@@ -3,8 +3,8 @@
     <ChatArea v-if="conns && username && !loading" :conns="conns" :username="username" />
     <VideoPlayer
       v-if="username"
-      style="display:none"
       ref="video"
+      style="display:none"
       :class="{ show: !loading }"
       :streaming="streaming"
     />
@@ -72,6 +72,7 @@ export default {
       });
     },
     setUsername(e) {
+      e.target.disabled = true;
       const name = e.target.value;
       if (name.trim() === '') {
         return;
@@ -96,49 +97,50 @@ export default {
 
       // Sending username to host once connected
       conn.on('open', () => {
+        this.disconnectEvent(conn);
         conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-      });
-      this.disconnectEvent(conn);
-      // Managing mesh network
-      conn.on('data', data => {
-        if (data.type === 'username') {
-          console.log('username recieved', data);
-          this.loading = false;
-          this.users.push(data);
-          // Saving host connection wait for dom
-          setTimeout(() => {
-            this.conns.push(conn);
-          });
-        }
-        if (data.type === 'connections') {
-          if (this.firstConnection) {
-            this.roomUsersId = data.ids;
-            console.log('Set to false');
-            this.firstConnection = false;
-            return;
-          }
-
-          // if already connected to host and new conneciton comes in
-          data.ids.forEach(user => {
-            if (!this.roomUsersId.includes(user) && this.peer.id !== user) {
-              this.roomUsersId.push(user);
-              console.log('Connect to ' + user);
-              const conn = this.peer.connect(user);
-              this.disconnectEvent(conn);
+        conn.on('data', data => {
+          if (data.type === 'username') {
+            console.log('username recieved', data);
+            this.loading = false;
+            this.users.push(data);
+            // Saving host connection wait for dom
+            setTimeout(() => {
               this.conns.push(conn);
-              conn.on('data', data => {
-                if (data.type === 'username') {
-                  console.log('username recieved', data);
-                  this.users.push(data);
-                }
-              });
-              conn.on('open', () => {
-                conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-              });
+            });
+          }
+          if (data.type === 'connections') {
+            if (this.firstConnection) {
+              this.roomUsersId = data.ids;
+              console.log('Set to false');
+              this.firstConnection = false;
+              return;
             }
-          });
-        }
+
+            // if already connected to host and new conneciton comes in
+            data.ids.forEach(user => {
+              if (!this.roomUsersId.includes(user) && this.peer.id !== user) {
+                this.roomUsersId.push(user);
+                console.log('Connect to ' + user);
+                const conn = this.peer.connect(user);
+                this.disconnectEvent(conn);
+                this.conns.push(conn);
+                conn.on('data', data => {
+                  if (data.type === 'username') {
+                    console.log('username recieved', data);
+                    this.users.push(data);
+                  }
+                });
+                conn.on('open', () => {
+                  conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+                });
+              }
+            });
+          }
+        });
       });
+
+      // Managing mesh network
 
       this.peer.on('call', call => {
         console.log('called');
@@ -156,15 +158,18 @@ export default {
     peerConnection() {
       this.peer.on('connection', conn => {
         this.conns.push(conn);
-        this.disconnectEvent(conn);
-        // gets username of others and sends own username
-        conn.on('data', data => {
-          console.log('username attempt');
-          if (data.type === 'username') {
-            conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-            this.users.push(data);
-          }
+        conn.on('open', () => {
+          this.disconnectEvent(conn);
+          // gets username of others and sends own username
+          conn.on('data', data => {
+            console.log('username attempt');
+            if (data.type === 'username') {
+              conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+              this.users.push(data);
+            }
+          });
         });
+
         console.log('User Connected', conn.peer);
       });
       this.connectToHost();

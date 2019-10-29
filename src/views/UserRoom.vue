@@ -74,6 +74,7 @@ export default {
       });
     },
     setUsername(e) {
+      e.target.disabled = true;
       const name = e.target.value;
       if (name.trim() === '') {
         return;
@@ -111,22 +112,20 @@ export default {
         conn.on('open', () => {
           const peerIds = this.conns.map(c => c.peer);
           this.sendToAllPeers({ type: 'connections', ids: peerIds });
-        });
-
-        // Host gets username
-        conn.on('data', data => {
-          console.log('username attempt');
-          if (data.type === 'username') {
-            conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-            this.users.push(data);
-            conn.send(this.users);
+          conn.on('data', data => {
+            console.log('username attempt');
+            if (data.type === 'username') {
+              conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+              this.users.push(data);
+              conn.send(this.users);
+            }
+          });
+          this.disconnectEvent(conn);
+          // send stream to new user
+          if (this.streaming) {
+            this.peer.call(conn.peer, this.stream);
           }
         });
-        this.disconnectEvent(conn);
-        // send stream to new user
-        if (this.streaming) {
-          this.peer.call(conn.peer, this.stream);
-        }
       });
     },
     setStream(stream) {
