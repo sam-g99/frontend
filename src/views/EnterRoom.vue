@@ -81,18 +81,15 @@ export default {
       this.loading = true;
       // waiting for dom
       setTimeout(() => {
-        this.getPeerId(name);
-        this.peerConnection();
-      });
-    },
-    getPeerId() {
-      this.peer = this.peerId('');
-      this.peer.on('open', id => {
-        console.log(id);
+        this.connectToHost();
       });
     },
 
     connectToHost() {
+      this.peer = this.peerConnect('');
+      this.peer.on('open', id => {
+        console.log(id);
+      });
       const conn = this.peer.connect(this.$route.params.id);
       // Sending username to host once connected
       conn.on('open', () => {
@@ -100,48 +97,9 @@ export default {
         console.log('Connection Opened');
         this.loading = false;
         this.disconnectEvent(conn);
-        conn.on('data', data => {
-          if (data.type === 'username') {
-            console.log('username recieved', data);
-            this.users.push(data);
-            // Saving host connection wait for dom
-            setTimeout(() => {
-              this.conns.push(conn);
-            });
-          }
-          if (data.type === 'connections') {
-            if (this.firstConnection) {
-              this.roomUsersId = data.ids;
-              console.log('Set to false');
-              this.firstConnection = false;
-              return;
-            }
-
-            // if already connected to host and new conneciton comes in
-            data.ids.forEach(user => {
-              if (!this.roomUsersId.includes(user) && this.peer.id !== user) {
-                this.roomUsersId.push(user);
-                console.log('Connect to ' + user);
-                const conn = this.peer.connect(user);
-                this.disconnectEvent(conn);
-                this.conns.push(conn);
-                conn.on('data', data => {
-                  if (data.type === 'username') {
-                    console.log('username recieved', data);
-                    this.users.push(data);
-                  }
-                });
-                conn.on('open', () => {
-                  conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-                });
-              }
-            });
-          }
-        });
       });
 
       // Managing mesh network
-
       this.peer.on('call', call => {
         console.log('called');
         call.answer();
@@ -153,26 +111,6 @@ export default {
           this.streaming = true;
         });
       });
-    },
-
-    peerConnection() {
-      this.peer.on('connection', conn => {
-        this.conns.push(conn);
-        conn.on('open', () => {
-          this.disconnectEvent(conn);
-          // gets username of others and sends own username
-          conn.on('data', data => {
-            console.log('username attempt');
-            if (data.type === 'username') {
-              conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-              this.users.push(data);
-            }
-          });
-        });
-
-        console.log('User Connected', conn.peer);
-      });
-      this.connectToHost();
     },
   },
 };

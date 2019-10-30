@@ -6,11 +6,11 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 
-import peerConnect from './middleware/peerConnect';
+import peerConnect from './mixin/peerConnect';
 
 Vue.mixin({
   methods: {
-    peerId: peerConnect,
+    peerConnect: peerConnect,
   },
 });
 

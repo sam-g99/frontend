@@ -1,7 +1,7 @@
 <template>
   <div class="viewing-room-container">
     <VideoPlayer v-if="username" ref="video" :streaming="streaming" />
-    <ChatArea v-if="conns && username" :conns="conns" :username="username" />
+    <!-- <ChatArea v-if="conns && username" :conns="conns" :username="username" /> -->
     <StreamButton
       v-if="videoPlayer && username"
       :videoPlayer="videoPlayer"
@@ -48,29 +48,81 @@ export default {
     };
   },
   mounted() {
-    this.start();
+    this.runPeerProccesses();
   },
   methods: {
+    runPeerProccesses() {
+      // First step - connecting to peer server to broker connections
+      this.peer = this.peerConnect('');
+
+      this.peer.on('open', id => {
+        console.log('Peer connection opened', id);
+        this.shareLink = `${window.location.origin}/room/${id}`;
+      });
+
+      this.peer.on('error', function(err) {
+        console.log(err);
+        alert('' + err);
+      });
+
+      // Second Step - Listen for incoming connecitons
+      this.peer.on('connection', conn => {
+        console.log('User conneced', conn.peer);
+
+        conn.on('open', () => {
+          console.log('connection is open', conn.peer);
+
+          // Letting the new connection know the hosts username
+          conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+
+          const peerIds = this.conns.map(c => c.peer);
+
+          // sending this so other connections can call connection to new connection
+          this.sendToAllPeers({ type: 'connections', ids: peerIds });
+          console.log('notified current connections of new connection', conn.peer);
+
+          // add connection to connection list
+          this.conns.push(conn);
+          console.log('added to connection list', conn.peer);
+
+          this.disconnectEvent(conn);
+
+          // send stream to new user
+          if (this.streaming) {
+            this.peer.call(conn.peer, this.stream);
+            console.log('called to send stream', conn.peer);
+          }
+        });
+
+        conn.on('data', data => {
+          console.log('Data Recieved');
+
+          switch (data.type) {
+            case 'username':
+              console.log('Recieved username', data);
+              this.users.push(data);
+              conn.send(this.users); // sending back a list of users
+              console.log('sent list of usernames', conn.peer);
+              break;
+          }
+        });
+      });
+    },
     disconnectEvent(conn) {
       conn.on('close', () => {
+        console.log('connection closed', conn);
         this.conns.forEach((c, i) => {
           if (c.id === conn.peer) {
             this.conns.splice(i, 1);
+            console.log('connection removed', conn.peer);
           }
         });
         this.users.forEach((user, i) => {
           if (user.peerId === conn.peer) {
             this.users.splice(i, 1);
+            console.log('username removed', user.name);
           }
         });
-      });
-    },
-    // All the stuff for mesh network
-
-    getPeerId() {
-      this.peer = this.peerId();
-      this.peer.on('open', id => {
-        this.shareLink = `${window.location.origin}/room/${id}`;
       });
     },
     setUsername(e) {
@@ -92,53 +144,14 @@ export default {
       document.execCommand('copy');
     },
 
-    peerConnection() {
-      this.peer.on('open', function(id) {
-        console.log('My peer ID is: ' + id);
-      });
-    },
-
     sendToAllPeers(message) {
       this.conns.forEach(conn => {
         conn.send(message);
       });
     },
-    getPeers() {
-      this.peer.on('connection', conn => {
-        conn.on('data', data => {
-          console.log('username attempt');
-          if (data.type === 'username') {
-            conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
-            this.users.push(data);
-            conn.send(this.users);
-          }
-        });
-
-        console.log('User conneced', conn.peer);
-        // add connection to connection list
-        this.conns.push(conn);
-        // Send the connection status to all peers
-        conn.on('open', () => {
-          console.log('connection is open');
-          const peerIds = this.conns.map(c => c.peer);
-          this.sendToAllPeers({ type: 'connections', ids: peerIds });
-
-          this.disconnectEvent(conn);
-          // send stream to new user
-          if (this.streaming) {
-            this.peer.call(conn.peer, this.stream);
-          }
-        });
-      });
-    },
     setStream(stream) {
       this.streaming = true;
       this.stream = stream;
-    },
-    start() {
-      this.getPeerId();
-      this.peerConnection();
-      this.getPeers();
     },
   },
 };
