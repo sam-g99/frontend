@@ -55,7 +55,7 @@ export default {
     disconnectEvent(conn) {
       conn.on('close', () => {
         this.conns.forEach((c, i) => {
-          if (c.id === conn.peer) {
+          if (c.peer === conn.peer) {
             this.conns.splice(i, 1);
           }
         });
@@ -92,11 +92,59 @@ export default {
       });
       const conn = this.peer.connect(this.$route.params.id);
       // Sending username to host once connected
+
       conn.on('open', () => {
         conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
         console.log('Connection Opened');
         this.loading = false;
         this.disconnectEvent(conn);
+        conn.on('data', data => {
+          switch (data.type) {
+            case 'username':
+              console.log('Recieved username', data);
+              this.users.push(data);
+              break;
+            case 'connections':
+              console.log('new connection arrived', data);
+              // Lets new connection not try to connect to others in the room since they'll cconnect to them
+              if (this.firstConnection) {
+                this.roomUsersId = data.ids; // potential bug, concerned about connecting to old candadite if disconnected but this user joins before it's registered
+                this.firstConnection = false;
+                console.log('first connection', this.roomUsersId);
+                return;
+              }
+
+              // If already connected to host and a new connection comes in
+              data.ids.forEach(user => {
+                console.log('connecting to new connection', user);
+                if (!this.roomUsersId.includes(user) && this.peer.id !== user) {
+                  this.roomUsersId.push(user);
+                  const conn = this.peer.connect(user);
+                  console.log('attempting to connect to new connection', conn);
+                  conn.on('open', () => {
+                    conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+                    console.log('connection opened, send username', conn);
+                  });
+                  conn.on('data', data => {
+                    // need DRY
+                    if (data.type === 'username') {
+                      console.log('username recieved being pushed into array', data);
+                      this.users.push(data);
+                    }
+                  });
+                  this.disconnectEvent(conn);
+                  this.conns.push(conn);
+                  console.log('pushed the connection into array', conn);
+                }
+              });
+              break;
+            case 'stream stopped':
+              console.log('call disconnected');
+              this.streaming = false;
+              this.$refs.video.$refs.mainVideo.srcObject = null; // will make it a state soon
+              break;
+          }
+        });
       });
 
       // Managing mesh network
@@ -109,6 +157,21 @@ export default {
           videoPlayer.srcObject = hostStream;
           videoPlayer.muted = false;
           this.streaming = true;
+        });
+      });
+
+      this.peer.on('connection', conn => {
+        this.conns.push(conn);
+        conn.on('open', () => {
+          console.log('someone is trying to connect to you');
+          // sending back usernamne MAKE DRY
+          conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+          conn.on('data', data => {
+            if (data.type === 'username') {
+              console.log('username recieved being pushed into array', data);
+              this.users.push(data);
+            }
+          });
         });
       });
     },

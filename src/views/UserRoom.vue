@@ -8,12 +8,14 @@
       :peer="peer"
       :conns="conns"
       @streaming="setStream"
+      @stoppedStream="stoppedStream"
     />
     <ConnectedUsers v-if="username" :users="users" />
+
     <div v-if="username" class="room-link-container">
-      <p>Share Room Link</p>
-      <input ref="roomLink" type="text" :value="`${shareLink}`" class="copy-input" readonly />
-      <button @click="copyLink">Copy Link</button>
+      <CopyInput :shareLink="shareLink">
+        <p class="share-title">Share Room Link</p>
+      </CopyInput>
     </div>
     <UserName v-if="!username" :action="setUsername" alert="Enter a username to host" />
   </div>
@@ -25,6 +27,7 @@ import ChatArea from '@/components/chat/ChatArea.vue';
 import ConnectedUsers from '@/components/chat/ConnectedUsers.vue';
 import StreamButton from '@/components/video/StreamButton';
 import UserName from '@/components/chat/UserName.vue';
+import CopyInput from '@/components/CopyInput.vue';
 
 export default {
   components: {
@@ -33,6 +36,7 @@ export default {
     ConnectedUsers,
     StreamButton,
     UserName,
+    CopyInput,
   },
   data: () => {
     return {
@@ -60,6 +64,12 @@ export default {
         this.shareLink = `${window.location.origin}/room/${id}`;
       });
 
+      this.peer.on('disconnected', () => {
+        alert(
+          'Something with wrong with your connection to the peer server. Try to make a new room',
+        );
+      });
+
       this.peer.on('error', function(err) {
         console.log(err);
         alert('' + err);
@@ -67,27 +77,39 @@ export default {
 
       // Second Step - Listen for incoming connecitons
       this.peer.on('connection', conn => {
+        // Stop if there are already 10 connections
+        if (this.conns.length === 10) {
+          conn.send({ type: 'full' });
+
+          setTimeout(() => {
+            conn.close();
+          }, 500);
+
+          console.log('closed the connection due to max number of users');
+          return;
+        }
+
         console.log('User conneced', conn.peer);
 
         conn.on('open', () => {
           console.log('connection is open', conn.peer);
+          // add connection to connection list
+          this.conns.push(conn);
+          console.log('added to connection list', conn.peer);
 
           // Letting the new connection know the hosts username
           conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
 
           const peerIds = this.conns.map(c => c.peer);
 
-          // sending this so other connections can call connection to new connection
+          // sending connected peer ids so other connections can call connection to new connection
           this.sendToAllPeers({ type: 'connections', ids: peerIds });
           console.log('notified current connections of new connection', conn.peer);
 
-          // add connection to connection list
-          this.conns.push(conn);
-          console.log('added to connection list', conn.peer);
-
+          // Making sure they are removed from the arrays when they disconnect
           this.disconnectEvent(conn);
 
-          // send stream to new user
+          // send stream to new user if stream is currently active
           if (this.streaming) {
             this.peer.call(conn.peer, this.stream);
             console.log('called to send stream', conn.peer);
@@ -95,14 +117,12 @@ export default {
         });
 
         conn.on('data', data => {
-          console.log('Data Recieved');
+          console.log('Data Recieved', data);
 
           switch (data.type) {
             case 'username':
               console.log('Recieved username', data);
               this.users.push(data);
-              conn.send(this.users); // sending back a list of users
-              console.log('sent list of usernames', conn.peer);
               break;
           }
         });
@@ -112,7 +132,7 @@ export default {
       conn.on('close', () => {
         console.log('connection closed', conn);
         this.conns.forEach((c, i) => {
-          if (c.id === conn.peer) {
+          if (c.peer === conn.peer) {
             this.conns.splice(i, 1);
             console.log('connection removed', conn.peer);
           }
@@ -137,12 +157,6 @@ export default {
         this.videoPlayer = this.$refs.video.$refs.mainVideo;
       });
     },
-    copyLink() {
-      const link = this.$refs.roomLink;
-      link.select();
-      link.setSelectionRange(0, 99999);
-      document.execCommand('copy');
-    },
 
     sendToAllPeers(message) {
       this.conns.forEach(conn => {
@@ -153,6 +167,12 @@ export default {
       this.streaming = true;
       this.stream = stream;
     },
+    stoppedStream() {
+      this.sendToAllPeers({ type: 'stream stopped' });
+      console.log('sent to all peers that stream stopped');
+      this.streaming = false;
+      this.stream = '';
+    },
   },
 };
 </script>
@@ -161,13 +181,6 @@ export default {
 .viewing-room-container {
   background: #1b182d !important;
   height: 100%;
-  .copy-input {
-    border: none;
-    padding: 10px;
-    background: #25213d;
-    color: white;
-    font-size: 20px;
-  }
 
   .room-link-container {
     padding: 10px;

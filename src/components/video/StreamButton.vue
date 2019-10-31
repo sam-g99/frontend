@@ -1,6 +1,7 @@
 <template>
   <div>
     <button @click="getStream">Start Stream</button>
+    <button @click="closeStream">Stop Stream</button>
   </div>
 </template>
 
@@ -23,7 +24,17 @@ export default {
   data: () => {
     return {
       constraints: {
-        audio: true,
+        audio: {
+          echoCancellation: false,
+          googEchoCancellation: false,
+          googEchoCancellation2: false,
+          googAutoGainControl: false,
+          googAutoGainControl2: false,
+          googNoiseSuppression: false,
+          googNoiseSuppression2: false,
+          googHighpassFilter: false,
+          googTypingNoiseDetection: false,
+        },
         video: {
           width: { max: 1280 },
           height: { max: 720 },
@@ -31,6 +42,7 @@ export default {
           frameRate: { max: 30 },
         },
       },
+      calls: [],
     };
   },
   methods: {
@@ -43,12 +55,30 @@ export default {
         return;
       }
       this.videoPlayer.srcObject = stream;
+      console.log(stream.getAudioTracks());
       this.videoPlayer.muted = true;
       this.$emit('streaming', stream);
       this.conns.forEach(conn => {
         console.log('called', conn.peer);
-        this.peer.call(conn.peer, stream);
+        const call = this.peer.call(conn.peer, stream);
+        console.log(call);
+        this.calls.push(call);
       });
+    },
+    closeStream() {
+      const stream = this.videoPlayer.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      this.calls.forEach(call => {
+        call.close();
+        console.log('call closed', call);
+      });
+      this.conns.forEach(conn => {
+        conn.send({ type: 'streamStoppped' });
+      });
+      this.calls.length = 0;
+      this.videoPlayer.srcObject = null;
+      this.$emit('stoppedStream');
     },
   },
 };
