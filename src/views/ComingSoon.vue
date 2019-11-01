@@ -115,10 +115,11 @@ export default {
     adjustNachos();
     const minHeight = 600;
     const adjustHeight = () => {
+      this.$store.state.windowHeight = `${window.innerHeight}px`;
       if (window.innerHeight < minHeight && window.matchMedia('(orientation: landscape)').matches) {
-        this.$store.state.windowHeight = minHeight;
+        this.$store.state.windowHeight = `${minHeight}px`;
       } else {
-        this.$store.state.windowHeight = window.innerHeight;
+        this.$store.state.windowHeight = `${window.innerHeight}px`;
       }
     };
     adjustHeight();
