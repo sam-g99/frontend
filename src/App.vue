@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{ height: `${windowHeight}px` }">
+  <div id="app" :style="{ height: `${windowHeight}` }">
     <router-view />
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {
 #app {
   color: #2c3e50;
   font-family: 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
-  height: 100vh; /* default */
+  height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 500px;
