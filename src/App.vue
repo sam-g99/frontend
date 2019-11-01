@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{ height: `${windowHeight}px` }">
+  <div id="app" :style="{ height: `${windowHeight}` }">
     <router-view />
   </div>
 </template>
@@ -16,6 +16,12 @@ export default {
   },
   computed: {
     ...mapState(['windowHeight']),
+  },
+  mounted() {
+    const path = this.$route.fullPath;
+    if (path !== '/') {
+      this.$router.push('/');
+    }
   },
 };
 </script>
@@ -35,7 +41,7 @@ export default {
   height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 400px;
+  min-height: 500px;
   position: relative;
   text-align: center;
   width: 100%;
