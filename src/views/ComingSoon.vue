@@ -1,10 +1,13 @@
 <template>
   <div class="coming-soon" :class="{ inputMode: isFocused }">
-    <LogoAnimated height="200px" />
-    <h1>Coming Soon</h1>
-    <p class="coming-soon__desc">Share your screen, window and tabs with your friends</p>
+    <div class="coming-soon__logo-container">
+      <LogoAnimated height="100%" />
+    </div>
 
-    <Form :action="submitEmail" :submitted="submitted" />
+    <h1>Coming Soon</h1>
+    <p class="coming-soon__desc">Share your screen, window and tabs with your friends.</p>
+
+    <Form :action="submitEmail" :submitted="submitted" :loading="loading" :email="email" />
 
     <Twitter :submitted="submitted" />
 
@@ -17,7 +20,7 @@
 import PurpleNachos from '@/components/PurpleNachos';
 import Twitter from '@/components/Twitter';
 import Form from '@/components/Form';
-import LogoAnimated '@/components/LogoAnimated.vue';
+import LogoAnimated from '@/components/LogoAnimated.vue';
 
 export default {
   name: 'ComingSoon',
@@ -81,6 +84,8 @@ export default {
     isFocused: '',
     submitted: false,
     nachosAmount: 8,
+    loading: false,
+    email: '',
     meta: {
       title: 'Coming Soon',
       description: {
@@ -100,34 +105,56 @@ export default {
     },
   }),
   mounted() {
-    const minHeight = 600;
-    if (window.innerHeight < minHeight && window.matchMedia('(orientation: landscape)').matches) {
-      this.$store.state.windowHeight = minHeight;
-    } else {
-      this.$store.state.windowHeight = window.innerHeight;
-    }
-    window.addEventListener('resize', () => {
-      if (this.$refs.email !== document.activeElement) {
-        if (
-          window.innerHeight < minHeight &&
-          window.matchMedia('(orientation: landscape)').matches
-        ) {
-          this.$store.state.windowHeight = minHeight;
-        } else {
-          this.$store.state.windowHeight = window.innerHeight;
-        }
-      }
-      // Purple Nacho Logic
+    const adjustNachos = () => {
       if (window.innerWidth < 1150) {
         this.nachosAmount = 19;
       } else {
         this.nachosAmount = 8;
       }
+    };
+    adjustNachos();
+    const minHeight = 600;
+    const adjustHeight = () => {
+      this.$store.state.windowHeight = `${window.innerHeight}px`;
+      if (window.innerHeight < minHeight && window.matchMedia('(orientation: landscape)').matches) {
+        this.$store.state.windowHeight = `${minHeight}px`;
+      } else {
+        this.$store.state.windowHeight = `${window.innerHeight}px`;
+      }
+    };
+    adjustHeight();
+    window.addEventListener('resize', () => {
+      if (this.$refs.email !== document.activeElement) {
+        adjustHeight();
+      }
+      // Purple Nacho Logic
+      adjustNachos();
     });
   },
   methods: {
     submitEmail() {
-      this.submitted = true;
+      this.loading = true;
+      this.axios
+        .post(`${this.$store.state.api}add-address`, {
+          email: this.$store.state.email,
+        })
+        .then(() => {
+          this.$store.state.alert = '';
+          this.submitted = true;
+          this.loading = false;
+        })
+        .catch(error => {
+          window.navigator.vibrate(200);
+          const errorStatus = error.response.status;
+          this.loading = false;
+          if (errorStatus === 403) {
+            this.$store.state.alert =
+              'Your email is already setup to be notified! Thanks for the commitment though.';
+          } else {
+            this.$store.state.alert =
+              'Oop, hold the cheese, something went wrong. Try again later.';
+          }
+        });
     },
   },
 };
@@ -152,7 +179,7 @@ $desktop: 1000;
   width: 100%;
   @include flex(flex-start, center);
 
-  &__logo {
+  &__logo-container {
     backface-visibility: hidden;
     filter: grayscale(0%); // fixes flickering in firefox
     margin-top: 10px;
