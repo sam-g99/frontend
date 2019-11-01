@@ -32,6 +32,7 @@ export default {
 #app {
   color: #2c3e50;
   font-family: 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
+  height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 400px;
