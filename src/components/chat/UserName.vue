@@ -2,9 +2,16 @@
   <div>
     <div class="username-container">
       <label> {{ alert }}</label>
-      <input ref="mainInput" type="text" placeholder="Enter a username" @keyup.enter="action" />
+      <input
+        ref="mainInput"
+        type="text"
+        placeholder="Enter a username"
+        maxlength="16"
+        required="true"
+        @keyup.enter="action"
+      />
     </div>
-    <div class="desc">
+    <!-- <div class="desc">
       <h3>Please read (If you are hosting, I suggest you use Chrome)</h3>
       <p>
         Hey, with this demo application you can host and connect to rooms where the host streams
@@ -14,7 +21,7 @@
         audio please use tab sharing and click the <b>share audio</b> checkbox since so far desktop
         audio access is only via extension as well as auto checking the share audio button.
       </p>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -46,15 +53,15 @@ export default {
   }
 }
 input {
-  background: #342f52;
+  background: #ffffff;
   border: none;
-  padding: 10px;
+  padding: 12px;
   font-size: 18px;
   width: 320px;
   margin-top: 10px;
-  border-radius: 100px;
+  border-radius: 10px;
   outline: none;
-  color: white;
+  color: rgb(26, 26, 26);
 }
 
 .desc {
@@ -70,7 +77,7 @@ input {
   max-height: 500px;
   color: rgb(0, 0, 0);
   height: auto;
-  h3{
+  h3 {
     font-weight: 500;
     margin-bottom: 10px;
   }

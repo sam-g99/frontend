@@ -5,7 +5,6 @@
       <p class="users-name">
         <b>Welcome, {{ username }} </b>
       </p>
-      <p class="info">Messages you send will show no name on your screen.</p>
     </div>
     <div ref="messageContainer" class="chat-container">
       <div v-for="(message, index) in messages" :key="index" class="message-container">
@@ -138,14 +137,11 @@ export default {
 
 .chat-room {
   align-items: center;
-  background: #2c2844;
+  background: #2e2e2e;
   display: flex;
   flex-flow: column;
   height: 100%;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 400px;
+  width: 300px;
 
   .is-typing {
     color: white;
@@ -153,7 +149,7 @@ export default {
   }
 
   .title {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
     color: white;
     padding: 30px;
     padding-bottom: 15px;
@@ -193,7 +189,7 @@ export default {
     width: 100%;
 
     .message-container {
-      background: #35314d;
+      background: #424242;
       border-radius: 5px;
       padding: 10px;
       position: relative;
@@ -206,14 +202,11 @@ export default {
       }
 
       .username {
-        background: #2c2844;
         border-radius: 100px;
         display: inline-block;
         font-weight: 500;
         margin-bottom: 7px;
-        padding: 5px;
-        padding-left: 10px;
-        padding-right: 10px;
+        text-decoration: underline;
         width: auto;
       }
 

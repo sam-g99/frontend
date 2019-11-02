@@ -41,7 +41,20 @@ export default {
 }
 
 .viewing-room-container {
-  background: #1b182d !important;
-  min-height: 100vh;
+  background: #5b5095 !important;
+  height: 100vh;
+}
+
+.viewing-room-container {
+  display: flex;
+  width: 100%;
+
+  .video-side {
+    width: 100%;
+  }
+
+  .chat-side {
+    margin-left: auto;
+  }
 }
 </style>

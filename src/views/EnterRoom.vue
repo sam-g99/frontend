@@ -1,22 +1,26 @@
 <template>
   <div class="viewing-room-container">
-    <ChatArea v-if="conns && username && !loading" :conns="conns" :username="username" />
-    <VideoPlayer
-      v-if="username"
-      ref="video"
-      style="display: none;"
-      :class="{ show: !loading }"
-      :streaming="streaming"
-    />
-    <ConnectedUsers v-if="username && !loading" :users="users" />
-    <UserName
-      v-if="!username || loading"
-      :action="setUsername"
-      alert="To join the room enter a username"
-    />
-    <p v-if="loading" class="loading-in">
-      Loading you in now...if it takes to long host may not exist or an unknown error.
-    </p>
+    <div class="video-side">
+      <VideoPlayer
+        v-if="username"
+        ref="video"
+        style="display: none;"
+        :class="{ show: !loading }"
+        :streaming="streaming"
+      />
+      <ConnectedUsers v-if="username && !loading" :users="users" />
+      <UserName
+        v-if="!username || loading"
+        :action="setUsername"
+        alert="To join the room enter a username"
+      />
+      <p v-if="loading" class="loading-in">
+        Loading you in now...if it takes to long host may not exist or an unknown error.
+      </p>
+    </div>
+    <div class="chat-side">
+      <ChatArea v-if="conns && username && !loading" :conns="conns" :username="username" />
+    </div>
   </div>
 </template>
 
@@ -72,11 +76,11 @@ export default {
       });
     },
     setUsername(e) {
-      e.target.disabled = true;
       const name = e.target.value;
       if (name.trim() === '') {
         return;
       }
+      e.target.disabled = true;
       this.username = name;
       this.loading = true;
       // waiting for dom
@@ -182,6 +186,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.viewing-room-container {
+  display: flex;
+  width: 100%;
+
+  .video-side {
+    width: 100%;
+  }
+
+  .chat-side {
+    margin-left: auto;
+  }
+}
+
 .loading-in {
   color: white;
   font-size: 30px;

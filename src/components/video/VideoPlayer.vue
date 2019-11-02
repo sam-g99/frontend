@@ -23,10 +23,11 @@ export default {
 
 <style lang="scss" scoped>
 .video-player {
-  max-width: 1080px;
   position: relative;
   user-select: none;
-  width: 60%;
+  width: 100%;
+  margin: 0 auto;
+  background: black;
 
   &__video {
     max-height: 620px;

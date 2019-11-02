@@ -1,24 +1,29 @@
 <template>
   <div class="viewing-room-container">
-    <VideoPlayer v-if="username" ref="video" :streaming="streaming" />
-    <!-- <ChatArea v-if="conns && username" :conns="conns" :username="username" /> -->
-    <StreamButton
-      v-if="videoPlayer && username"
-      :videoPlayer="videoPlayer"
-      :peer="peer"
-      :conns="conns"
-      @streaming="setStream"
-      @stoppedStream="stoppedStream"
-    />
-    <ConnectedUsers v-if="username" :users="users" />
+    <div class="video-side">
+      <VideoPlayer v-if="username" ref="video" :streaming="streaming" />
 
-    <div v-if="username" class="room-link-container">
-      <CopyInput :shareLink="shareLink">
-        <p class="share-title">Share Room Link</p>
-      </CopyInput>
+      <!-- <ChatArea v-if="conns && username" :conns="conns" :username="username" /> -->
+      <StreamButton
+        v-if="videoPlayer && username"
+        :videoPlayer="videoPlayer"
+        :peer="peer"
+        :conns="conns"
+        @streaming="setStream"
+        @stoppedStream="stoppedStream"
+      />
+      <ConnectedUsers v-if="username" :users="users" />
+
+      <div v-if="username" class="room-link-container">
+        <CopyInput :shareLink="shareLink">
+          <p class="share-title">Share Room Link</p>
+        </CopyInput>
+      </div>
     </div>
     <UserName v-if="!username" :action="setUsername" alert="Enter a username to host" />
-    <ChatArea v-if="conns && username" :conns="conns" :username="username" />
+    <div class="chat-side">
+      <ChatArea v-if="conns && username" :conns="conns" :username="username" />
+    </div>
   </div>
 </template>
 
