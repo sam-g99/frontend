@@ -12,6 +12,7 @@ import Controls from './Controls';
 
 export default {
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     Controls,
   },
   // eslint-disable-next-line vue/require-prop-types
@@ -28,8 +29,8 @@ export default {
   width: 60%;
 
   &__video {
-    width: 100%;
     max-height: 620px;
+    width: 100%;
   }
 
   &__layer {

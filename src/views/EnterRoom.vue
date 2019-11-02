@@ -4,7 +4,7 @@
     <VideoPlayer
       v-if="username"
       ref="video"
-      style="display:none"
+      style="display: none;"
       :class="{ show: !loading }"
       :streaming="streaming"
     />
@@ -95,6 +95,7 @@ export default {
 
       conn.on('open', () => {
         conn.send({ type: 'username', name: this.username, peerId: this.peer.id });
+        console.log('host open', conn);
         console.log('Connection Opened');
         this.loading = false;
         this.disconnectEvent(conn);
@@ -103,6 +104,7 @@ export default {
             case 'username':
               console.log('Recieved username', data);
               this.users.push(data);
+              this.conns.push(conn);
               break;
             case 'connections':
               console.log('new connection arrived', data);
@@ -180,15 +182,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.viewing-room-container {
-  background: #1b182d !important;
-  height: 100%;
-}
 .loading-in {
   color: white;
-  font-weight: 500;
   font-size: 30px;
+  font-weight: 500;
 }
+
 .show {
   display: block !important;
 }

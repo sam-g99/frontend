@@ -39,4 +39,9 @@ export default {
   position: relative;
   width: 100%;
 }
+
+.viewing-room-container {
+  background: #1b182d !important;
+  min-height: 100vh;
+}
 </style>

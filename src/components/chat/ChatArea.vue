@@ -69,6 +69,7 @@ export default {
     conns: function(newConns) {
       const conn = newConns[newConns.length - 1];
       this.listenForMessages(conn);
+      console.log('conn watcher', conn);
     },
   },
   mounted() {},
@@ -82,9 +83,10 @@ export default {
       };
     },
     sendToAllPeers(message) {
-      console.log(message);
+      console.log('sending this message to peers', message);
       this.conns.forEach(conn => {
         conn.send(message);
+        console.log('sent to', conn.peer);
       });
     },
     sendMessage() {
@@ -102,7 +104,9 @@ export default {
     },
 
     listenForMessages(conn) {
+      console.log('listening to messages from', conn);
       conn.on('data', msg => {
+        console.log('listenformessages', msg);
         if (msg.type === 'typing') {
           this.typing = true;
           this.typer = msg.username;

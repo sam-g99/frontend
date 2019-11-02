@@ -18,6 +18,7 @@
       </CopyInput>
     </div>
     <UserName v-if="!username" :action="setUsername" alert="Enter a username to host" />
+    <ChatArea v-if="conns && username" :conns="conns" :username="username" />
   </div>
 </template>
 
@@ -179,23 +180,22 @@ export default {
 
 <style lang="scss" scoped>
 .viewing-room-container {
-  background: #1b182d !important;
-  height: 100%;
-
   .room-link-container {
     padding: 10px;
+
     p {
       color: white;
-      margin-top: 10px;
-      margin-bottom: 10px;
       font-weight: 500;
+      margin-bottom: 10px;
+      margin-top: 10px;
     }
   }
+
   button {
     background: rgb(41, 121, 226);
     border: none;
-    padding: 13px;
     color: white;
+    padding: 13px;
   }
 }
 </style>

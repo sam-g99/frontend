@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button @click="getStream">Start Stream</button>
-    <button @click="closeStream">Stop Stream</button>
+    <button v-if="!streaming" @click="getStream">Start Stream</button>
+    <button v-if="streaming" class="stop" @click="closeStream">Stop Stream</button>
   </div>
 </template>
 
@@ -43,6 +43,7 @@ export default {
         },
       },
       calls: [],
+      streaming: false,
     };
   },
   methods: {
@@ -57,6 +58,7 @@ export default {
       this.videoPlayer.srcObject = stream;
       console.log(stream.getAudioTracks());
       this.videoPlayer.muted = true;
+      this.streaming = true;
       this.$emit('streaming', stream);
       this.conns.forEach(conn => {
         console.log('called', conn.peer);
@@ -66,6 +68,7 @@ export default {
       });
     },
     closeStream() {
+      this.streaming = false;
       const stream = this.videoPlayer.srcObject;
       const tracks = stream.getTracks();
       tracks.forEach(track => track.stop());
@@ -88,12 +91,16 @@ export default {
 button {
   background: green;
   border: none;
-  padding: 10px;
-  font-weight: 500;
   border-radius: 5px;
   color: white;
   font-size: 20px;
-  margin-top: 15px;
+  font-weight: 500;
   margin-bottom: 10px;
+  margin-top: 15px;
+  padding: 10px;
+}
+
+.stop {
+  background: red;
 }
 </style>
