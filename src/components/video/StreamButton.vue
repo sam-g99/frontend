@@ -39,7 +39,7 @@ export default {
           width: { max: 1280 },
           height: { max: 720 },
           aspectRatio: 1.777777778,
-          frameRate: { max: 30 },
+          frameRate: { max: 24 },
         },
       },
       calls: [],

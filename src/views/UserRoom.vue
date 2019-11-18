@@ -2,7 +2,7 @@
   <div class="viewing-room-container">
     <div class="video-side">
       <VideoPlayer v-if="username" ref="video" :streaming="streaming" />
-
+      <h2>Peer2Peer Demo</h2>
       <!-- <ChatArea v-if="conns && username" :conns="conns" :username="username" /> -->
       <StreamButton
         v-if="videoPlayer && username"
@@ -185,6 +185,12 @@ export default {
 
 <style lang="scss" scoped>
 .viewing-room-container {
+    h2{
+    font-family: 'Red Hat Text', sans-serif;
+    color: #17BB80;
+    font-weight: 500;
+    font-size: 60px;
+  }
   .room-link-container {
     padding: 10px;
 

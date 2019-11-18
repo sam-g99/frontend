@@ -41,7 +41,7 @@ export default {
 }
 
 .viewing-room-container {
-  background: #5b5095 !important;
+  background: #363636 !important;
   height: 100vh;
 }
 

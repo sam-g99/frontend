@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="username-container">
-      <label> {{ alert }}</label>
       <input
         ref="mainInput"
         type="text"
@@ -10,24 +9,19 @@
         required="true"
         @keyup.enter="action"
       />
+      <span class="counter"></span>
     </div>
-    <!-- <div class="desc">
-      <h3>Please read (If you are hosting, I suggest you use Chrome)</h3>
-      <p>
-        Hey, with this demo application you can host and connect to rooms where the host streams
-        their screen,application window, or tab via p2p communication. This was made to research and
-        demonstrate the potential of Nacho Night (an upcoming open source platform I started with
-        other devs) and start planning a more solid application. If you want to share a video with
-        audio please use tab sharing and click the <b>share audio</b> checkbox since so far desktop
-        audio access is only via extension as well as auto checking the share audio button.
-      </p>
-    </div> -->
   </div>
 </template>
 
 <script>
 export default {
   // eslint-disable-next-line vue/require-prop-types
+  data(){
+    return {
+      charactersLeft: 16,
+    }
+  },
   props: {
     action: { type: Function, required: true },
     alert: { type: String, required: true },
@@ -59,7 +53,6 @@ input {
   font-size: 18px;
   width: 320px;
   margin-top: 10px;
-  border-radius: 10px;
   outline: none;
   color: rgb(26, 26, 26);
 }
